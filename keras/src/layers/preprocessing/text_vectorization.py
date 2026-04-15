@@ -541,6 +541,10 @@ class TextVectorization(Layer):
             if callable(self._standardize):
                 if backend.backend() != "tensorflow":
                     inputs = backend.convert_to_numpy(inputs)
+                    if inputs.ndim == 0:
+                        inputs = inputs.item()
+                        if isinstance(inputs, bytes):
+                            inputs = inputs.decode(self._encoding)
                 inputs = self._standardize(inputs)
                 if backend.backend() != "tensorflow":
                     inputs = tf_utils.ensure_tensor(inputs, dtype=tf.string)
@@ -570,6 +574,10 @@ class TextVectorization(Layer):
                 elif callable(self._split):
                     if backend.backend() != "tensorflow":
                         inputs = backend.convert_to_numpy(inputs)
+                        if inputs.ndim == 0:
+                            inputs = inputs.item()
+                            if isinstance(inputs, bytes):
+                                inputs = inputs.decode(self._encoding)
                     inputs = self._split(inputs)
                     if backend.backend() != "tensorflow":
                         inputs = tf_utils.ensure_tensor(inputs, dtype=tf.string)
